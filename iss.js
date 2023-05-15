@@ -15,13 +15,16 @@ const fetchMyIP = function(callback) {
   // use request to fetch IP address from JSON API
   const url = 'https://api.ipify.org?format=json';
   request(url, (error, response, body) => {
-    if (error) {
-      console.log(error, null);
-    } else {
-      const data = JSON.parse(body);
-      console.log(data);
+    if (error) return callback(error, null);
+    
+    if (response.statusCode !== 200) {
+      callback(Error(`Status code ${response.statusCode} when fetching IP: ${body}`), null);
+      return;
     }
-  })
-}
+
+    const ip = JSON.parse(body).ip;
+    callback(null, ip);
+  });
+;}
 
 module.exports = { fetchMyIP };
